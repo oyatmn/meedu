@@ -731,13 +731,14 @@ class AdministratorPermissionSeeder extends Seeder
         foreach ($permissions as $groupItem) {
             $groupName = $groupItem['group_name'];
             foreach ($groupItem['children'] as $permissionItem) {
-                $permissionData = array_merge($permissionItem, [
+                $permissionData = array_merge([
                     'group_name' => $groupName,
                     'description' => '',
                     'route' => '',
                     'method' => '',
                     'url' => '',
-                    'route' => '',
+                ], $permissionItem, [
+                    'group_name' => $groupName,
                 ]);
 
                 $permission = \App\Models\AdministratorPermission::query()->where('slug', $permissionData['slug'])->first();
