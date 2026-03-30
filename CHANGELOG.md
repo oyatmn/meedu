@@ -1,4 +1,4 @@
-## [unrelease]
+## 4.9.30
 
 - 修复:[Admin]管理员列表邮箱字段权限(DATA)被 Seeder 覆盖为空导致无法查看的 BUG
 
