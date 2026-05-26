@@ -1,4 +1,4 @@
-## [unrelease]
+## 4.9.31
 
 - 安全:[API]修复 JWT 密钥未配置时回退为硬编码默认值导致可伪造管理员 Token 的未授权访问漏洞 (CNVD 补充材料)
   - ⚠️ **破坏性变更**:升级后若 `.env` 中未设置 `JWT_SECRET`,服务将无法启动;请先执行 `php artisan jwt:secret` 生成密钥
