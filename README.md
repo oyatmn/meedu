@@ -21,10 +21,50 @@
 git clone --branch main https://gitee.com/myteng/MeEdu.git meedu
 ```
 
-运行：
+运行(分 3 步):
+
+**① 进入目录并复制环境配置**
 
 ```
-cd meedu && cp .env.example .env && docker-compose up -d
+cd meedu
+cp .env.example .env          # Windows: 改为 copy .env.example .env
+```
+
+**② 编辑 `.env`,把 `APP_KEY=` 和 `JWT_SECRET=` 两行都填上随机密钥**
+
+> `APP_KEY` 是 Laravel 全应用对称加密密钥(Cookie/Session/加密字段等);`JWT_SECRET` 是 JWT 签名密钥。两者**都必须自行生成且保密**,留空或使用公开示例值会导致 Cookie 可被解密、Token 可被伪造,出现未授权访问风险。
+
+**生成 `APP_KEY`**(任选其一,必须是 `base64:<32 字节 base64>` 格式):
+
+```
+# macOS / Linux
+echo "base64:$(openssl rand -base64 32)"
+
+# Windows PowerShell
+$b=New-Object byte[] 32;[Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($b);"base64:"+[Convert]::ToBase64String($b)
+```
+
+**生成 `JWT_SECRET`**(任选其一):
+
+```
+# macOS / Linux
+openssl rand -base64 48
+
+# Windows PowerShell
+$b=New-Object byte[] 48;[Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($b);[Convert]::ToBase64String($b)
+```
+
+将输出分别粘贴到 `.env` 中对应行后面(等号后无空格),例如:
+
+```
+APP_KEY=base64:7tQp...(你生成的字符串)
+JWT_SECRET=hVZ8b2pK...(你生成的字符串)
+```
+
+**③ 启动容器**
+
+```
+docker-compose up -d
 ```
 
 > 🚨请注意，上述命令运行 MeEdu 存在一定的使用安全风险，仅供测试使用！如需在正式生产环境使用 MeEdu 还请阅读 [部署文档](https://faq.meedu.vip/doc/g9jK0KXmFe) 。

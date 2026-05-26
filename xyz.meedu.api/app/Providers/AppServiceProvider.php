@@ -26,6 +26,27 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // 敏感密钥安全校验:未配置时严禁继续运行 HTTP 请求,杜绝硬编码默认密钥风险
+        $sensitiveKeys = [
+            'APP_KEY' => ['config' => 'app.key', 'command' => 'php artisan key:generate'],
+            'JWT_SECRET' => ['config' => 'jwt.secret', 'command' => 'php artisan jwt:secret'],
+        ];
+        foreach ($sensitiveKeys as $envName => $meta) {
+            if (empty(config($meta['config']))) {
+                $message = sprintf(
+                    '%s 未配置!请在 .env 中设置 %s 后再启动服务。可执行 `%s` 自动生成。',
+                    $envName,
+                    $envName,
+                    $meta['command']
+                );
+                if ($this->app->runningInConsole()) {
+                    logger()->error($message);
+                } else {
+                    throw new \RuntimeException($message);
+                }
+            }
+        }
+
         // 兼容MySQL5.6
         Schema::defaultStringLength(191);
         // ServiceV2注册
